@@ -2,17 +2,19 @@ import { useState, useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import api from "../services/projectapi";
 import { useNavigate, Link } from "react-router-dom";
-import { AxiosError } from "axios";
+import type { AxiosError } from "../services/projectapi";
 
 
-interface LoginResponse {
+interface SignupResponse {
   user: { id: string; name: string; email: string };
   token: string;
 }
 
-export default function Login() {
+export default function Signup() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext)!;
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,23 +23,30 @@ export default function Login() {
     e.preventDefault();
     setError("");
     try {
-  const res = await api.post<LoginResponse>(
-    "/auth/login",
-    { email, password },
-    { withCredentials: true });
+      const res = await api.post<SignupResponse>("/api/auth/signup", { name, email, password });
       auth.login(res.data.user, res.data.token);
       navigate("/dashboard");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
-      setError(error.response?.data.message || "Login failed");
+      setError(error.response?.data?.message || "Signup failed");
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-xl shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit}>
+          <label htmlFor="name" className="sr-only">Name</label>
+          <input
+            id="name"
+            type="text"
+            placeholder="Name"
+            className="border border-gray-300 p-2 rounded-md w-full mb-4"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            required
+          />
           <label htmlFor="email" className="sr-only">Email</label>
           <input
             id="email"
@@ -62,18 +71,16 @@ export default function Login() {
             type="submit"
             className="bg-blue-600 text-white p-2 w-full rounded-md hover:bg-blue-700 transition"
           >
-            Login
+            Create Account
           </button>
         </form>
         {error && <p className="text-red-600 text-sm mt-3 text-center">{error}</p>}
-        <div className="flex justify-between text-sm mt-4">
-          <Link to="/forgot-password" className="text-blue-600 hover:underline">
-            Forgot password?
+        <p className="text-sm text-center mt-4">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Login
           </Link>
-          <Link to="/signup" className="text-blue-600 hover:underline">
-            Create account
-          </Link>
-        </div>
+        </p>
       </div>
     </div>
   );
