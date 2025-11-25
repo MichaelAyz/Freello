@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import  api  from "../services/projectapi";   // import the axios instance
+import  api  from "../services/projectapi"; 
 import type { AxiosError } from "../services/projectapi";
 
 interface ForgotPasswordResponse {

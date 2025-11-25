@@ -14,11 +14,15 @@ router.post("/forgot-password", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "Account with that email does not exist" });
+      return res
+        .status(404)
+        .json({ message: "Account with that email does not exist" });
     }
 
-    // Remember to refactor for real email service
-    return res.status(200).json({ message: "A reset link has been sent to your email" });
+    // refactor for real email service
+    return res
+      .status(200)
+      .json({ message: "A reset link has been sent to your email" });
   } catch (error) {
     console.error("Forgot password error:", error);
     res.status(500).json({ message: "Something went wrong" });

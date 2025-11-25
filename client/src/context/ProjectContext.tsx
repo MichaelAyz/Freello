@@ -1,122 +1,236 @@
-import { createContext, useContext, useEffect, useState,
-  type ReactNode,
-} from "react";
-import type { Project } from "../types/Project";
-import {
-  getProjects,
-  createProject,
-  updateProject,
-  deleteProject,
-} from "../../services/projectapi";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { Project, Task } from "../types/Project";
+import { getProjects, createProject, updateProject, deleteProject} from "../../services/projectapi";
+import { useAuth } from "./AuthContext";
 
-interface ProjectContextProps {
+interface ProjectContextType {
   projects: Project[];
+  boardProjectIds: string[];
   loading: boolean;
+  loadProjects: () => Promise<void>;
+  
+  addProject: (data: Omit<Project, "_id" | "userId" | "createdAt" | "updatedAt" | "tasks">) => Promise<void>;
+  editProject: (projectId: string, updates: Partial<Project>) => Promise<void>;
+  removeProject: (projectId: string) => Promise<void>;
+  reorderBoardProjects: (startIndex: number, endIndex: number) => void;
+  addProjectToBoard: (projectId: string) => void;
+
+  addTask: (projectId: string, text: string) => void;
+  toggleTask: (projectId: string, taskId: string) => void;
+  editTask: (projectId: string, taskId: string, text: string) => void;
+  removeTask: (projectId: string, taskId: string) => void;
+
   isFormOpen: boolean;
   openForm: () => void;
   closeForm: () => void;
 
   selectedProject: Project | null;
-  openDetails: (p: Project) => void;
+  openDetails: (project: Project) => void;
   closeDetails: () => void;
-
-  addProject: (data: any) => Promise<void>;
-  editProject: (id: string, data: any) => Promise<void>;
-  removeProject: (id: string) => Promise<void>;
 }
 
-const ProjectContext = createContext<ProjectContextProps>({} as any);
+const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
-export function useProjects() {
-  return useContext(ProjectContext);
-}
-
-export function ProjectProvider({ children }: { children: ReactNode }) {
+export const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [boardProjectIds, setBoardProjectIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
+  // Load projects when user is authenticated
   useEffect(() => {
-    load();
-  }, []);
-
-  async function load() {
-  setLoading(true);
-  try {
-    const res = await getProjects();
-    // debug line — remove later
-    console.log("PROJECTS RESPONSE RAW:", res.data);
-
-    // normalize: support array or wrapped object { projects: [...] } or { data: [...] }
-    let payload = res.data;
-    if (!payload) payload = [];
-    if (payload.projects) payload = payload.projects;
-    if (payload.data) payload = payload.data;
-    // if backend returned an object with a field, but you expected an array,
-    // try to find the first array in the response:
-    if (!Array.isArray(payload)) {
-      const maybeArray = Object.values(res.data).find(v => Array.isArray(v));
-      if (Array.isArray(maybeArray)) payload = maybeArray;
+    if (user) {
+      loadProjects();
+      loadBoardState();
     }
+  }, [user]);
 
-    // ensure we always set an array
-    const arr = Array.isArray(payload) ? payload : [];
-    console.log("PROJECTS RESPONSE NORMALIZED (length):", arr.length);
-    setProjects(arr);
-  } catch (err) {
-    console.error("Load projects error:", (err as any)?.response?.data || err);
-    // If auth failed we still want loading to stop and allow UI to show an empty state
-    setProjects([]);
-  } finally {
-    setLoading(false);
-  }  
+  // Save board state to localStorage whenever it changes
+  useEffect(() => {
+    if (user && boardProjectIds.length > 0) {
+      localStorage.setItem(`boardState_${user.id}`, JSON.stringify(boardProjectIds));
+    }
+  }, [boardProjectIds, user]);
 
-  //setLoading(true);
-  //const res = await getProjects();
-  //console.log("PROJECTS RESPONSE:", res.data);
-  //setProjects(res.data);
-  //setLoading(false);
-}
+  const loadProjects = async () => {
+    try {
+      setLoading(true);
+      const res = await getProjects();
+      setProjects(res.data);
+    } catch (error) {
+      console.error("Failed to load projects:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const loadBoardState = () => {
+    if (!user) return;
+    
+    const saved = localStorage.getItem(`boardState_${user.id}`);
+    if (saved) {
+      try {
+        const parsedIds = JSON.parse(saved);
+        setBoardProjectIds(parsedIds);
+      } catch (error) {
+        console.error("Failed to load board state:", error);
+      }
+    }
+  };
 
-  async function addProject(data: any) {
-    const res = await createProject(data);
-    setProjects((prev) => [...prev, res.data]);
-    setIsFormOpen(false);
-  }
+  const addProject = async (data: Omit<Project, "_id" | "userId" | "createdAt" | "updatedAt" | "tasks">) => {
+    try {
+      const payload = {
+        ...data,
+        tasks: []  
+      };
+      
+      const res = await createProject(payload);
+      setProjects((prev) => [...prev, res.data]);
+      closeForm();
+    } catch (error) {
+      console.error("Failed to create project:", error);
+      throw error; 
+    }
+  };
 
-  async function editProject(id: string, data: any) {
-    const res = await updateProject(id, data);
-    setProjects((prev) => prev.map((p) => (p._id === id ? res.data : p)));
-  }
+  const editProject = async (projectId: string, updates: Partial<Project>) => {
+    try {
+      const res = await updateProject(projectId, updates);
+      setProjects((prev) =>
+        prev.map((p) => (p._id === projectId ? res.data : p))
+      );
+      if (selectedProject?._id === projectId) {
+        setSelectedProject(res.data);
+      }
+    } catch (error) {
+      console.error("Failed to update project:", error);
+      throw error;
+    }
+  };
 
-  async function removeProject(id: string) {
-    await deleteProject(id);
-    setProjects((prev) => prev.filter((p) => p._id !== id));
-    setSelectedProject(null);
-  }
+  const removeProject = async (projectId: string) => {
+    try {
+      await deleteProject(projectId);
+      setProjects((prev) => prev.filter((p) => p._id !== projectId));
+      setBoardProjectIds((prev) => prev.filter((id) => id !== projectId));
+      closeDetails();
+    } catch (error) {
+      console.error("Failed to delete project:", error);
+      throw error;
+    }
+  };
+
+  const addProjectToBoard = (projectId: string) => {
+    if (!boardProjectIds.includes(projectId)) {
+      setBoardProjectIds((prev) => [...prev, projectId]);
+    }
+  };
+
+  const reorderBoardProjects = (startIndex: number, endIndex: number) => {
+    const reordered = Array.from(boardProjectIds);
+    const [removed] = reordered.splice(startIndex, 1);
+    reordered.splice(endIndex, 0, removed);
+    setBoardProjectIds(reordered);
+
+    console.log("Board projects reordered:", reordered);
+  };
+
+  // Task operations with safety checks
+  const addTask = (projectId: string, text: string) => {
+    const newTask: Task = {
+      _id: crypto.randomUUID(),
+      text,
+      done: false,
+    };
+
+    setProjects((prev) =>
+      prev.map((p) =>
+        p._id === projectId
+          ? { ...p, tasks: [...(p.tasks || []), newTask] }
+          : p
+      )
+    );
+  };
+
+  const toggleTask = (projectId: string, taskId: string) => {
+    setProjects((prev) =>
+      prev.map((p) =>
+        p._id === projectId
+          ? {
+              ...p,
+              tasks: (p.tasks || []).map((t) =>
+                t._id === taskId ? { ...t, done: !t.done } : t
+              ),
+            }
+          : p
+      )
+    );
+  };
+
+  const editTask = (projectId: string, taskId: string, text: string) => {
+    setProjects((prev) =>
+      prev.map((p) =>
+        p._id === projectId
+          ? {
+              ...p,
+              tasks: (p.tasks || []).map((t) =>
+                t._id === taskId ? { ...t, text } : t
+              ),
+            }
+          : p
+      )
+    );
+  };
+
+  const removeTask = (projectId: string, taskId: string) => {
+    setProjects((prev) =>
+      prev.map((p) =>
+        p._id === projectId
+          ? { ...p, tasks: (p.tasks || []).filter((t) => t._id !== taskId) }
+          : p
+      )
+    );
+  };
+
+  const openForm = () => setIsFormOpen(true);
+  const closeForm = () => setIsFormOpen(false);
+  const openDetails = (project: Project) => setSelectedProject(project);
+  const closeDetails = () => setSelectedProject(null);
 
   return (
     <ProjectContext.Provider
       value={{
         projects,
+        boardProjectIds,
         loading,
-
-        isFormOpen,
-        openForm: () => setIsFormOpen(true),
-        closeForm: () => setIsFormOpen(false),
-
-        selectedProject,
-        openDetails: (p: Project) => setSelectedProject(p),
-        closeDetails: () => setSelectedProject(null),
-
+        loadProjects,
         addProject,
         editProject,
         removeProject,
+        reorderBoardProjects,
+        addProjectToBoard,
+        addTask,
+        toggleTask,
+        editTask,
+        removeTask,
+        isFormOpen,
+        openForm,
+        closeForm,
+        selectedProject,
+        openDetails,
+        closeDetails,
       }}
     >
       {children}
     </ProjectContext.Provider>
   );
-}
+};
+
+export const useProjects = () => {
+  const ctx = useContext(ProjectContext);
+  if (!ctx) throw new Error("useProjects must be used inside ProjectProvider");
+  return ctx;
+};

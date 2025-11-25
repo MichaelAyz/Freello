@@ -1,3 +1,18 @@
+export type ProjectStatus =
+  | "Inquiry"
+  | "Proposal"
+  | "InProgress"
+  | "Review"
+  | "Completed";
+
+export interface Task {
+  _id?: string;
+  text: string;
+  done: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface Project {
   _id: string;
   userId: string;
@@ -6,7 +21,8 @@ export interface Project {
   budget: number;
   deadline: string;
   notes: string;
-  status: "Inquiry" | "Proposal" | "In Progress" | "Review" | "Completed";
+  status: ProjectStatus;
+  tasks: Task[];
   createdAt: string;
   updatedAt: string;
 }

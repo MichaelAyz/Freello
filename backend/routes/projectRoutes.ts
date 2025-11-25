@@ -11,7 +11,15 @@ router.post("/", verifyToken, async (req: Request, res: Response) => {
     const userId = authReq.user?.id;
     const { title, clientName, budget, deadline, notes, status } = req.body;
 
-    const project = new Project({ userId, title, clientName, budget, deadline, notes, status });
+    const project = new Project({
+      userId,
+      title,
+      clientName,
+      budget,
+      deadline,
+      notes,
+      status,
+    });
     await project.save();
     res.status(201).json(project);
   } catch (error) {
@@ -20,7 +28,6 @@ router.post("/", verifyToken, async (req: Request, res: Response) => {
   }
 });
 
-// get all projects for a user
 router.get("/", verifyToken, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthRequest;
@@ -33,7 +40,97 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
   }
 });
 
-// update
+
+router.post(
+  "/:projectId/tasks",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const authReq = req as AuthRequest;
+      const userId = authReq.user?.id;
+      const { text } = req.body;
+
+      const project = await Project.findOne({
+        _id: req.params.projectId,
+        userId,
+      });
+      if (!project)
+        return res.status(404).json({ message: "Project not found" });
+
+      const newTask = {
+        _id: Date.now().toString(),
+        text,
+        done: false,
+      };
+
+      project.tasks.push(newTask);
+      await project.save();
+
+      console.log("✅ Task added to project:", project._id);
+      res.status(201).json(project);
+    } catch (error) {
+      console.error("Add task error:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+router.patch(
+  "/:projectId/tasks/:taskId",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const authReq = req as AuthRequest;
+      const userId = authReq.user?.id;
+      const { projectId, taskId } = req.params;
+      const { done, text } = req.body;
+
+      const project = await Project.findOne({ _id: projectId, userId });
+      if (!project)
+        return res.status(404).json({ message: "Project not found" });
+
+      const task = project.tasks.find((t: any) => t._id === taskId);
+      if (!task) return res.status(404).json({ message: "Task not found" });
+
+      if (done !== undefined) task.done = done;
+      if (text !== undefined) task.text = text;
+
+      await project.save();
+      console.log("✅ Task updated:", taskId);
+      res.json(project);
+    } catch (error) {
+      console.error("Update task error:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+router.delete(
+  "/:projectId/tasks/:taskId",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const authReq = req as AuthRequest;
+      const userId = authReq.user?.id;
+      const { projectId, taskId } = req.params;
+
+      const project = await Project.findOne({ _id: projectId, userId });
+      if (!project)
+        return res.status(404).json({ message: "Project not found" });
+
+      project.tasks = project.tasks.filter((t: any) => t._id !== taskId);
+      await project.save();
+
+      console.log("✅ Task deleted:", taskId);
+      res.json(project);
+    } catch (error) {
+      console.error("Delete task error:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+
 router.put("/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthRequest;
@@ -52,13 +149,15 @@ router.put("/:id", verifyToken, async (req: Request, res: Response) => {
   }
 });
 
-// delete project
 router.delete("/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthRequest;
     const userId = authReq.user?.id;
-    const deleted = await Project.findOneAndDelete({ _id: req.params.id, userId });
-    if (!deleted) return res.status(404).json({ message: "Project not found" });
+    const deleted = await Project.findOneAndDelete({
+      _id: req.params.id,
+      userId,
+    });
+    if (!deleted) return res.status(404).json({ message: "Project deleted" });
     res.json({ message: "Project deleted" });
   } catch (error) {
     console.error("Delete project error:", error);

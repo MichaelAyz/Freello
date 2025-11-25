@@ -9,10 +9,12 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 const setTokenCookie = (res: Response, token: string) => {
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true, // true only in production HTTPS
-    sameSite: "none",
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    secure: false,
+    sameSite: "lax",
+    maxAge: 24 * 60 * 60 * 1000, 
+    domain: undefined,
   });
+
 };
 
 export const signup = async (req: Request, res: Response) => {
@@ -28,6 +30,7 @@ export const signup = async (req: Request, res: Response) => {
     setTokenCookie(res, token);
 
     return res.json({
+      token,
       user: { id: user._id, name: user.name, email: user.email },
       message: "Signup successful",
     });
@@ -48,7 +51,8 @@ export const login = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1d" });
     setTokenCookie(res, token);
 
-    return res.json({ token,
+    return res.json({ 
+      token,
       user: { id: user._id, name: user.name, email: user.email },
       message: "Login successful",
     });

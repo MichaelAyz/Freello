@@ -1,14 +1,9 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
-import api from "../services/projectapi";
+import { signup } from "../services/projectapi"; 
 import { useNavigate, Link } from "react-router-dom";
 import type { AxiosError } from "../services/projectapi";
 
-
-interface SignupResponse {
-  user: { id: string; name: string; email: string };
-  token: string;
-}
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -22,12 +17,18 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    console.log("🚀 Attempting signup:", { name, email, password: "***hidden***" });
+
     try {
-      const res = await api.post<SignupResponse>("/api/auth/signup", { name, email, password });
+      const res = await signup({ name, email, password });  
+      console.log("✅ Signup successful:", res.data);
+      
       auth.login(res.data.user, res.data.token);
       navigate("/dashboard");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
+      console.error("❌ Signup error:", error.response?.data);
       setError(error.response?.data?.message || "Signup failed");
     }
   };

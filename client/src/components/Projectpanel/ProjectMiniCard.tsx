@@ -1,19 +1,30 @@
-
+import React from "react";
 import type { Project } from "../../types/Project";
 
-export default function ProjectMiniCard({
-  project,
-  onClick,
-}: {
+interface ProjectMiniCardProps {
   project: Project;
-  onClick?: () => void;
-}) {
+  onClick: () => void;
+  isDragging?: boolean;
+}
+
+const ProjectMiniCard: React.FC<ProjectMiniCardProps> = ({ 
+  project, 
+  onClick, 
+  isDragging = true 
+}) => {
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer bg-gray-100 hover:bg-gray-200 transition p-3 rounded-md shadow-sm text-sm"
+      className={`bg-gray-50 hover:bg-gray-100 p-3 rounded-lg cursor-pointer border border-gray-200 transition ${
+        isDragging ? "opacity-50 shadow-lg" : ""
+      }`}
     >
-      <div className="font-medium truncate">{project.title}</div>
+      <p className="text-sm font-medium text-gray-700 truncate">
+        {project.title}
+      </p>
+    
     </div>
   );
-}
+};
+
+export default ProjectMiniCard;

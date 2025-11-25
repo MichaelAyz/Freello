@@ -14,7 +14,7 @@ export default function Dashboard() {
       <Link
         to="/projects"
         className="text-blue-600 underline hover:text-blue-800">
-        Go to Projects Board →
+        Go to Projects Space →
       </Link>
 
     </div>
