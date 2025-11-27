@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import type { Project, Task } from "../types/Project";
-import { getProjects, createProject, updateProject, deleteProject} from "../../services/projectapi";
+import type { Project } from "../types/Project";
+import { 
+  getProjects, 
+  createProject, 
+  updateProject, 
+  deleteProject,
+  addTask as apiAddTask,
+  updateTask as apiUpdateTask,
+  deleteTask as apiDeleteTask
+} from "../../services/projectapi";
 import { useAuth } from "./AuthContext";
 
 interface ProjectContextType {
@@ -15,10 +23,10 @@ interface ProjectContextType {
   reorderBoardProjects: (startIndex: number, endIndex: number) => void;
   addProjectToBoard: (projectId: string) => void;
 
-  addTask: (projectId: string, text: string) => void;
-  toggleTask: (projectId: string, taskId: string) => void;
-  editTask: (projectId: string, taskId: string, text: string) => void;
-  removeTask: (projectId: string, taskId: string) => void;
+  addTask: (projectId: string, text: string) => Promise<void>;
+  toggleTask: (projectId: string, taskId: string) => Promise<void>;
+  editTask: (projectId: string, taskId: string, text: string) => Promise<void>;
+  removeTask: (projectId: string, taskId: string) => Promise<void>;
 
   isFormOpen: boolean;
   openForm: () => void;
@@ -30,6 +38,7 @@ interface ProjectContextType {
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
+
 
 export const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -138,61 +147,79 @@ export const ProjectProvider = ({ children }: { children: React.ReactNode }) => 
     console.log("Board projects reordered:", reordered);
   };
 
-  // Task operations with safety checks
-  const addTask = (projectId: string, text: string) => {
-    const newTask: Task = {
-      _id: crypto.randomUUID(),
-      text,
-      done: false,
-    };
-
-    setProjects((prev) =>
-      prev.map((p) =>
-        p._id === projectId
-          ? { ...p, tasks: [...(p.tasks || []), newTask] }
-          : p
-      )
-    );
+  // ✅ FIXED: Task operations now call backend API
+  const addTask = async (projectId: string, text: string) => {
+    try {
+      console.log(`📝 Adding task to project ${projectId}:`, text);
+      const res = await apiAddTask(projectId, text);
+      
+      // Update local state with the full project response from backend
+      setProjects((prev) =>
+        prev.map((p) => (p._id === projectId ? res.data : p))
+      );
+      
+      console.log("✅ Task added successfully");
+    } catch (error) {
+      console.error("❌ Failed to add task:", error);
+      throw error;
+    }
   };
 
-  const toggleTask = (projectId: string, taskId: string) => {
-    setProjects((prev) =>
-      prev.map((p) =>
-        p._id === projectId
-          ? {
-              ...p,
-              tasks: (p.tasks || []).map((t) =>
-                t._id === taskId ? { ...t, done: !t.done } : t
-              ),
-            }
-          : p
-      )
-    );
+  const toggleTask = async (projectId: string, taskId: string) => {
+    try {
+      // Find current task to get its current done state
+      const project = projects.find(p => p._id === projectId);
+      const task = project?.tasks?.find(t => t._id === taskId);
+      
+      if (!task) {
+        console.error("Task not found:", taskId);
+        return;
+      }
+
+      console.log(`🔄 Toggling task ${taskId} in project ${projectId}`);
+      const res = await apiUpdateTask(projectId, taskId, { done: !task.done });
+      
+      setProjects((prev) =>
+        prev.map((p) => (p._id === projectId ? res.data : p))
+      );
+      
+      console.log("✅ Task toggled successfully");
+    } catch (error) {
+      console.error("❌ Failed to toggle task:", error);
+      throw error;
+    }
   };
 
-  const editTask = (projectId: string, taskId: string, text: string) => {
-    setProjects((prev) =>
-      prev.map((p) =>
-        p._id === projectId
-          ? {
-              ...p,
-              tasks: (p.tasks || []).map((t) =>
-                t._id === taskId ? { ...t, text } : t
-              ),
-            }
-          : p
-      )
-    );
+  const editTask = async (projectId: string, taskId: string, text: string) => {
+    try {
+      console.log(`✏️ Editing task ${taskId} in project ${projectId}`);
+      const res = await apiUpdateTask(projectId, taskId, { text });
+      
+      setProjects((prev) =>
+        prev.map((p) => (p._id === projectId ? res.data : p))
+      );
+      
+      console.log("✅ Task edited successfully");
+    } catch (error) {
+      console.error("❌ Failed to edit task:", error);
+      throw error;
+    }
   };
 
-  const removeTask = (projectId: string, taskId: string) => {
-    setProjects((prev) =>
-      prev.map((p) =>
-        p._id === projectId
-          ? { ...p, tasks: (p.tasks || []).filter((t) => t._id !== taskId) }
-          : p
-      )
-    );
+  const removeTask = async (projectId: string, taskId: string) => {
+    try {
+      console.log(`🗑️ Deleting task ${taskId} from project ${projectId}`);
+      const res = await apiDeleteTask(projectId, taskId);
+      
+      setProjects((prev) =>
+        prev.map((p) => (p._id === projectId ? res.data : p))
+      );
+      
+      console.log("✅ Task deleted successfully");
+    } catch (error) {
+      console.error("❌ Failed to delete task:", error);
+      throw error;
+    }
   };
 
   const openForm = () => setIsFormOpen(true);

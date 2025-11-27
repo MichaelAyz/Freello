@@ -56,34 +56,40 @@ export default function ProjectForm() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
+    // Overlay: Modern, blurred backdrop
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-sm animate-fadeIn">
+      {/* Modal Container: Warm Light Theme */}
+      <div className="bg-[#F9F8F6] rounded-xl p-8 w-full max-w-md shadow-2xl border border-white/50 animate-fadeIn">
+        
         {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-gray-800">Create New Project</h3>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800">Create New Project</h3>
+            <p className="text-stone-500 text-sm mt-1">Add details to start tracking.</p>
+          </div>
           <button
             type="button"
             onClick={closeForm}
-            className="p-1 hover:bg-gray-100 rounded transition"
+            className="p-2 hover:bg-stone-200/50 rounded-full transition-colors text-stone-400 hover:text-stone-600"
             disabled={loading}
           >
-            <X size={20} className="text-gray-500" />
+            <X size={20} />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded text-sm">
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded text-sm mb-4">
               {error}
             </div>
           )}
 
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Project Title *
+            <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
+              Project Title <span className="text-teal-500">*</span>
             </label>
             <input
               type="text"
@@ -91,87 +97,96 @@ export default function ProjectForm() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g Website Redesign"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-lg text-slate-700 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
               disabled={loading}
             />
           </div>
 
           {/* Client Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Client Name *
+            <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
+              Client Name <span className="text-teal-500">*</span>
             </label>
             <input
               type="text"
               required
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
-              placeholder=""
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Client or Company Name"
+              className="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-lg text-slate-700 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
               disabled={loading}
             />
           </div>
 
-          {/* Budget */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Budget
-            </label>
-            <input
-              type="number"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              placeholder=""
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Budget */}
+            <div>
+              <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
+                Budget
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-stone-400">$</span>
+                <input
+                  type="number"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full pl-7 pr-4 py-2.5 bg-white border border-stone-200 rounded-lg text-slate-700 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                  disabled={loading}
+                />
+              </div>
+            </div>
 
-          {/* Deadline */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Deadline
-            </label>
-            <input
-              type="date"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
-            />
+            {/* Deadline */}
+            <div>
+              <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
+                Deadline
+              </label>
+              <input
+                type="date"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                className="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                disabled={loading}
+              />
+            </div>
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
               Notes
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Additional project details..."
+              placeholder="Additional details..."
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-lg text-slate-700 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none"
               disabled={loading}
             />
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-3 pt-4 border-t border-stone-200/50 mt-2">
             <button
               type="button"
               onClick={closeForm}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium"
+              className="flex-1 px-4 py-2.5 border border-stone-200 text-stone-600 rounded-lg hover:bg-stone-100 hover:text-stone-800 transition-colors font-semibold text-sm"
               disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-all shadow-lg shadow-teal-600/20 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               disabled={loading}
             >
-              {loading ? "Creating..." : "Create Project"}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                "Create Project"
+              )}
             </button>
           </div>
         </form>

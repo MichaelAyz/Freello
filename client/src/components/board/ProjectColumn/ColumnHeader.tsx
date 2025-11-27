@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import type { Project } from "../../../types/Project";
 import StatusPill from "./StatusPill";
 import ColumnMenu from "./ColumnMenu";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Calendar } from "lucide-react";
 
 export interface ColumnHeaderProps {
   project: Project;
@@ -12,6 +12,7 @@ export interface ColumnHeaderProps {
   onEditProject: (id: string, title: string, deadline: string) => void;
   onDeleteProject: (id: string) => void;
   onViewDetails: () => void;
+  colorDot?: string; // Received from parent Column
 }
 
 const ColumnHeader: React.FC<ColumnHeaderProps> = ({
@@ -21,56 +22,97 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
   onStatusChange,
   onEditProject,
   onDeleteProject,
-  onViewDetails, 
+  onViewDetails,
+  colorDot = "bg-stone-400" // Default fallback
 }) => {
+  const menuContainerRef = useRef<HTMLDivElement>(null);
+
+  // Click outside handler
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuContainerRef.current && !menuContainerRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen, setMenuOpen]);
+
   return (
-    <div className="p-3 bg-white rounded-t-lg border-b border-gray-200">
+    // Styling: Clean, transparent background to blend with Column
+    <div className="p-4 pb-2 relative group">
+      
       {/* Header row with title and menu */}
-      <div className="flex justify-between items-start gap-2 mb-2">
-        <h3 className="font-semibold text-gray-800 text-sm leading-tight flex-1">
-          {project.title}
-        </h3>
+      <div className="flex justify-between items-start gap-2 mb-3">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+            {/* Dynamic Color Indicator */}
+            <div className={`w-2 h-2 rounded-full shrink-0 ${colorDot}`}></div>
+            
+            <h3 className="font-bold text-slate-700 text-sm leading-tight truncate cursor-text">
+            {project.title}
+            </h3>
+        </div>
 
         {/* 3-dot menu button */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="p-1 hover:bg-gray-100 rounded transition flex-shrink-0"
-        >
-          <MoreVertical size={16} className="text-gray-600" />
-        </button>
+        <div ref={menuContainerRef} className="relative shrink-0">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className={`
+                p-1 rounded transition-colors duration-200
+                ${menuOpen ? 'bg-stone-200 text-slate-800' : 'text-slate-400 hover:text-slate-600 hover:bg-stone-200/50'}
+            `}
+          >
+            <MoreVertical size={16} />
+          </button>
+
+          {/* Column Menu */}
+          {menuOpen && (
+            <div className="absolute right-0 top-full mt-1 z-50">
+                <ColumnMenu
+                onClose={() => setMenuOpen(false)}
+                onEdit={() => {
+                    onEditProject(project._id, project.title, project.deadline || "");
+                    setMenuOpen(false);
+                }}
+                onDelete={() => {
+                    onDeleteProject(project._id);
+                    setMenuOpen(false);
+                }}
+                onViewDetails={() => {  
+                    onViewDetails();
+                    setMenuOpen(false);
+                }}
+                />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Deadline */}
-      {project.deadline && (
-        <p className="text-xs text-gray-500 mb-2">
-          {new Date(project.deadline).toLocaleDateString()}
-        </p>
-      )}
+      {/* Meta Row: Deadline & Status */}
+      <div className="flex items-center justify-between gap-2">
+        {project.deadline ? (
+            <div className="flex items-center gap-1 text-[11px] font-medium text-stone-500 bg-stone-200/50 px-2 py-0.5 rounded-full">
+                <Calendar size={10} />
+                <span>{new Date(project.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+            </div>
+        ) : (
+            <div></div> // Spacer
+        )}
 
-      {/* Status pill */}
-      <StatusPill
-        currentStatus={project.status}
-        onStatusChange={(status) => onStatusChange(project._id, status)}
-      />
-
-      {/* Column Menu (absolute positioned) */}
-      {menuOpen && (
-        <ColumnMenu
-          onClose={() => setMenuOpen(false)}
-          onEdit={() => {
-            onEditProject(project._id, project.title, project.deadline || "");
-            setMenuOpen(false);
-          }}
-          onDelete={() => {
-            onDeleteProject(project._id);
-            setMenuOpen(false);
-          }}
-          onViewDetails={() => {  
-            onViewDetails();
-            setMenuOpen(false);
-          }}
+        {/* Status pill */}
+        <StatusPill
+            currentStatus={project.status}
+            onStatusChange={(status) => onStatusChange(project._id, status)}
         />
-      )}
+      </div>
+      
+      {/* Subtle Divider */}
+      <div className="h-px bg-stone-200/60 mt-3 w-full"></div>
     </div>
   );
 };

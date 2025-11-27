@@ -1,4 +1,5 @@
 import { Droppable, type DroppableProvided } from "@hello-pangea/dnd";
+import { FolderPlus } from "lucide-react";
 import Column from "./Column";
 import { useProjects } from "../../context/ProjectContext";
 
@@ -11,14 +12,17 @@ export default function Board() {
     .filter(Boolean) as typeof projects;
 
   return (
-    <div className="flex-1 overflow-x-auto overflow-y-hidden p-6 bg-gray-50">
+    <div className="flex-1 overflow-x-auto overflow-y-hidden p-6 h-full custom-scrollbar">
+      
       <Droppable droppableId="board" direction="horizontal">
-        {(provided: DroppableProvided) => (
+        {(provided: DroppableProvided, snapshot) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="flex gap-4 min-h-[calc(100vh-140px)]"
-            style={{ minWidth: 'fit-content', height: '100%' }}
+            className={`flex gap-6 h-full transition-colors rounded-xl ${
+                snapshot.isDraggingOver ? 'bg-zinc-800/30' : ''
+            }`}
+            style={{ minWidth: 'fit-content' }}
           >
             {boardProjects.map((project, idx) => (
               <Column key={project._id} project={project} index={idx} />
@@ -28,13 +32,14 @@ export default function Board() {
 
             {/* Empty State */}
             {boardProjects.length === 0 && (
-              <div className="flex-1 flex items-center justify-center min-h-[500px]">
-                <div className="text-center">
-                  <p className="text-gray-400 text-lg mb-2">No projects on board yet</p>
-                  <p className="text-gray-500 text-sm">
-                    Drag a project from the sidebar to get started
-                  </p>
+              <div className="flex-1 flex flex-col items-center justify-center h-[70vh] min-w-[300px] animate-fadeIn opacity-60">
+                <div className="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mb-6 border border-zinc-700 shadow-xl ring-4 ring-zinc-800">
+                    <FolderPlus size={32} className="text-teal-400" />
                 </div>
+                <h3 className="text-xl font-bold text-zinc-300 mb-2">Your Board is Empty</h3>
+                <p className="text-zinc-500 text-sm max-w-xs text-center">
+                  Drag a project card from the sidebar on the left to start visualizing your workflow.
+                </p>
               </div>
             )}
           </div>

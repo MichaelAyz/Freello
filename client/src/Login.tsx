@@ -188,7 +188,7 @@ export default function Login() {
       </div>
 
       {/* Decorative Bottom Wave (CSS only) */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-teal-400 to-emerald-400"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-linera-to-r from-blue-500 via-teal-400 to-emerald-400"></div>
     </div>
   );
 }

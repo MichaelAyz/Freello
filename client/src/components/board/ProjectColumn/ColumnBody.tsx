@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Plus } from "lucide-react";
 import type { Project } from "../../../types/Project";
 import TaskItem from "../Task/TaskItem";
 
@@ -27,12 +28,17 @@ const ColumnBody: React.FC<ColumnBodyProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col p-2 overflow-y-auto bg-gray-100">
-      <div className="space-y-2 mb-2 flex-1">
+    <div className="flex-1 flex flex-col p-3 overflow-y-auto custom-scrollbar">
+      
+      {/* Task List Area */}
+      <div className="space-y-2 mb-2 flex-1 min-h-[50px]">
         {(!project.tasks || project.tasks.length === 0) && (
-          <p className="text-gray-400 text-xs text-center py-4">
-            Add some tasks!
-          </p>
+          <div className="flex flex-col items-center justify-center py-6 opacity-50">
+             <div className="w-8 h-8 rounded-full bg-stone-200/50 mb-2"></div>
+             <p className="text-stone-400 text-xs text-center font-medium">
+               No tasks yet
+             </p>
+          </div>
         )}
 
         {project.tasks?.map((task) => (
@@ -46,21 +52,22 @@ const ColumnBody: React.FC<ColumnBodyProps> = ({
         ))}
       </div>
 
-    
-      <div className="flex gap-1 pt-2">
+      {/* Add Task Input */}
+      <div className="flex gap-2 pt-2 mt-auto">
         <input
           type="text"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
-          placeholder="Add task..."
-          className="flex-1 px-2 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
+          placeholder="Add a new task..."
+          className="flex-1 px-3 py-2 text-xs bg-white border border-stone-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all placeholder:text-stone-400"
         />
         <button
           onClick={handleAddTask}
-          className="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-xs font-medium"
+          disabled={!newTask.trim()}
+          className="px-3 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-lg transition-colors shadow-sm shadow-teal-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
         >
-          +
+          <Plus size={16} strokeWidth={3} />
         </button>
       </div>
     </div>

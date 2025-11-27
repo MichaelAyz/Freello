@@ -1,4 +1,6 @@
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
+import { Layout } from "lucide-react";
+
 import ProjectsPanel from "../Projectpanel/ProjectPanel";
 import Board from "../board/Board";
 import ProjectFormModal from "../Modal/ProjectForm";
@@ -10,22 +12,14 @@ export default function ProjectPage() {
   const { reorderBoardProjects, addProjectToBoard } = useProjects();
 
   const onDragEnd = (result: DropResult) => {
-    console.log(" Drag ended:", result);
-
     const { destination, source, draggableId } = result;
 
-    // Dropped outside valid area
-    if (!destination) {
-      console.log(" No destination - dropped outside");
-      return;
-    }
+    if (!destination) return;
 
-    // Dropped in same position
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
-      console.log(" Dropped in same position");
       return;
     }
 
@@ -33,7 +27,6 @@ export default function ProjectPage() {
 
   // SIDEBAR → BOARD
   if (source.droppableId === "sidebar" && destination.droppableId === "board") {
-    console.log("Adding to board:", projectId);
     addProjectToBoard(projectId);
     return;
   }
@@ -43,29 +36,45 @@ export default function ProjectPage() {
       source.droppableId === "board" &&
       destination.droppableId === "board"
     ) {
-      console.log(" Reordering board columns");
       reorderBoardProjects(source.index, destination.index);
       return;
     }
-
-    console.log("Unhandled drag scenario:", { source: source.droppableId, destination: destination.droppableId });
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="h-screen flex bg-gray-50">
+      {/* Main Container: Warm Light Background (#F4EDE4) */}
+      <div className="h-screen flex bg-freello-cream text-slate-700 overflow-hidden font-sans">
+        
+        {/* Left Sidebar */}
         <ProjectsPanel />
         
-        <div className="flex-1 flex flex-col">
-          {/* Top Bar with Avatar */}
-          <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center flex-shrink-0">
-            <div className="text-sm text-gray-500">
-              Trello Board
+        {/* Main Board Area */}
+        <div className="flex-1 flex flex-col min-w-0 relative">
+          
+          {/* Top Bar - Clean & White */}
+          <div className="bg-white/80 backdrop-blur-md border-b border-stone-200 px-6 py-3 flex justify-between items-center shrink-0 shadow-sm z-20">
+            {/* Freello Branding */}
+            <div className="flex items-center gap-2 text-teal-600">
+              <div className="p-1.5 bg-teal-50 rounded-lg">
+                <Layout size={20} strokeWidth={2.5} />
+              </div>
+              <span className="text-lg font-bold tracking-tight text-slate-800">Freello Board</span>
             </div>
-            <AvatarButton />
+
+            {/* User Avatar */}
+            <div className="flex items-center gap-4">
+               <div className="h-6 w-px bg-stone-200 mx-2 hidden sm:block"></div>
+               <AvatarButton />
+            </div>
           </div>
 
-          <Board />
+          {/* Board Canvas */}
+          <div className="flex-1 relative overflow-hidden">
+             {/* Subtle Texture for the 'Paper' feel */}
+             <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#A8A29E_1px,transparent_1px)] [bg-size:20px_20px] pointer-events-none"></div>
+             <Board />
+          </div>
         </div>
 
         {/* Modals */}

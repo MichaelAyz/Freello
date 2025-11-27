@@ -1,81 +1,52 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+@theme {
+  --color-freello-blue: #3A7CEB;  
+  --color-freello-teal: #2EC9B8;  
+  --color-freello-cream: #F4EDE4; 
+  --color-freello-navy: #1B1F3B;  
+  --color-freello-gray: #E7EBF0; 
+
+  
+  --color-blue-500: #5C94F0; 
+  --color-blue-600: #3A7CEB; 
+  --color-blue-700: #2B61BD; 
+  
+  /* Secondary/Success Accents (teal-600) */
+  --color-teal-500: #4BD4C5;
+  --color-teal-600: #2EC9B8; /* YOUR BRAND TURQUOISE */
+  --color-teal-700: #229689; /* Darker for Hover */
+
+  /* Text & Surfaces (slate/gray) */
+  --color-slate-600: #4B5563; /* Keep standard for subdued text */
+  --color-slate-800: #1B1F3B; /* Map dark slate to your Deep Navy */
+}
+
+/* --- GLOBAL STYLES --- */
+@layer base {
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    /* Apply your warm neutral background globally */
+    background-color: var(--color-freello-cream); 
+    color: var(--color-freello-navy);
+    -webkit-font-smoothing: antialiased;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+
+  input {
+    outline: none;
   }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.2s ease-out;
-}
-
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer utilities {
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
