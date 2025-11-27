@@ -24,14 +24,12 @@ const ProjectMiniCard: React.FC<ProjectMiniCardProps> = ({
         }
       `}
     >
-      {/* Content - Minimalist, Just Text */}
       <div className="flex-1 min-w-0">
         <p className={`text-sm font-medium truncate transition-colors ${isDragging ? 'text-teal-300' : 'text-zinc-300 group-hover:text-white'}`}>
           {project.title}
         </p>
       </div>
 
-      {/* Subtle Active Indicator (Only visible when dragging) */}
       {isDragging && (
         <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.6)]" />
       )}

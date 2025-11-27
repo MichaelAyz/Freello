@@ -8,15 +8,11 @@ export default function Dashboard() {
   const auth = useContext(AuthContext);
 
   return (
-    // Background: Cool Grey-Blue (#EAEEF2)
     <div className="min-h-screen w-full bg-[#EAEEF2] font-sans text-slate-600 selection:bg-teal-100 selection:text-teal-900">
       
-      {/* --- NAVBAR --- */}
       <nav className="w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
         
-        {/* Left: Brand & Context */}
         <div className="flex items-center gap-4">
-          {/* Logo */}
           <div className="flex items-center gap-2 text-blue-600">
             <div className="p-1.5 bg-blue-50 rounded-lg border border-blue-100">
                <Layout size={20} strokeWidth={2.5} />
@@ -24,32 +20,26 @@ export default function Dashboard() {
             <span className="text-xl font-bold tracking-tight text-slate-800 hidden sm:block">Freello</span>
           </div>
 
-          {/* Divider */}
           <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
 
-          {/* Context Indicator (Vibrant Pill) */}
           <div className="flex items-center gap-2 px-3 py-1 bg-teal-100/80 border border-teal-200 text-xs font-bold text-teal-700 shadow-sm rounded-full">
             <LayoutDashboard size={14} className="text-teal-600" />
             <span>Dashboard</span>
           </div>
         </div>
         
-        {/* Right: User Actions */}
         <div className="flex items-center gap-4">
           <div className="text-right hidden md:block">
             <p className="text-sm font-bold text-slate-700 leading-none">{auth?.user?.name || 'User'}</p>
-            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mt-0.5">Free Plan</p>
+            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mt-0.5">Premium</p>
           </div>
 
-          {/* Avatar Button (Handles Logout internally) */}
           <AvatarButton />
         </div>
       </nav>
 
-      {/* --- MAIN CONTENT --- */}
       <main className="max-w-5xl mx-auto px-6 py-12 lg:py-20 animate-fadeIn">
         
-        {/* Welcome Header */}
         <div className="text-center mb-12 space-y-3">
           <h1 className="text-3xl md:text-5xl font-extrabold text-slate-800 tracking-tight">
             Welcome back, <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-teal-500">{auth?.user?.name}</span>
@@ -59,10 +49,8 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Hero Action Card */}
         <div className="grid md:grid-cols-2 gap-0 items-stretch bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden relative group hover:shadow-2xl transition-all duration-500">
           
-          {/* Left: Content & CTA */}
           <div className="p-8 md:p-12 space-y-8 flex flex-col justify-center relative z-10">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-100">
@@ -73,7 +61,7 @@ export default function Dashboard() {
                 Continue to Projects
               </h2>
               <p className="text-slate-500 leading-relaxed">
-                Manage your boards, track tasks, and collaborate with your team in one central hub.
+                Stay organized. Stay productive. Stay ahead. Keep making progress!
               </p>
             </div>
 
@@ -86,14 +74,12 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          {/* Right: Abstract Dashboard Preview (Visual Decoration) */}
           <div className="bg-slate-50 min-h-[250px] relative p-8 flex items-center justify-center border-t md:border-t-0 md:border-l border-slate-100 overflow-hidden group-hover:bg-slate-50/80 transition-colors">
-             {/* Subtle Grid Pattern */}
+
              <div className="absolute inset-0 bg-slate-50 opacity-50 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [bg-size:16px_16px]"></div>
              
-             {/* Abstract Floating Board Card */}
              <div className="relative w-full max-w-[260px] aspect-4/3 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-200 p-4 transform -rotate-2 group-hover:rotate-0 group-hover:scale-105 transition-all duration-500 ease-out">
-                {/* Mock Header */}
+
                 <div className="flex gap-3 mb-4 items-center border-b border-slate-100 pb-3">
                   <div className="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center">
                     <Layout size={16} className="text-teal-600 opacity-50"/>

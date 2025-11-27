@@ -12,7 +12,7 @@ export interface ColumnHeaderProps {
   onEditProject: (id: string, title: string, deadline: string) => void;
   onDeleteProject: (id: string) => void;
   onViewDetails: () => void;
-  colorDot?: string; // Received from parent Column
+  colorDot?: string;
 }
 
 const ColumnHeader: React.FC<ColumnHeaderProps> = ({
@@ -23,11 +23,10 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
   onEditProject,
   onDeleteProject,
   onViewDetails,
-  colorDot = "bg-stone-400" // Default fallback
+  colorDot = "bg-stone-400" 
 }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null);
 
-  // Click outside handler
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -44,10 +43,8 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
   }, [menuOpen, setMenuOpen]);
 
   return (
-    // Styling: Clean, transparent background to blend with Column
     <div className="p-4 pb-2 relative group">
       
-      {/* Header row with title and menu */}
       <div className="flex justify-between items-start gap-2 mb-3">
         <div className="flex items-center gap-2 flex-1 min-w-0">
             {/* Dynamic Color Indicator */}
@@ -58,7 +55,7 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
             </h3>
         </div>
 
-        {/* 3-dot menu button */}
+
         <div ref={menuContainerRef} className="relative shrink-0">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -70,7 +67,6 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
             <MoreVertical size={16} />
           </button>
 
-          {/* Column Menu */}
           {menuOpen && (
             <div className="absolute right-0 top-full mt-1 z-50">
                 <ColumnMenu
@@ -93,7 +89,6 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
         </div>
       </div>
 
-      {/* Meta Row: Deadline & Status */}
       <div className="flex items-center justify-between gap-2">
         {project.deadline ? (
             <div className="flex items-center gap-1 text-[11px] font-medium text-stone-500 bg-stone-200/50 px-2 py-0.5 rounded-full">
@@ -101,10 +96,9 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
                 <span>{new Date(project.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
             </div>
         ) : (
-            <div></div> // Spacer
+            <div></div> 
         )}
-
-        {/* Status pill */}
+        
         <StatusPill
             currentStatus={project.status}
             onStatusChange={(status) => onStatusChange(project._id, status)}

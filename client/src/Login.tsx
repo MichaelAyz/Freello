@@ -61,7 +61,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Bottom Right - Task List */}
       <div 
         className="absolute bottom-[10%] right-[5%] lg:right-[15%] opacity-40 lg:opacity-100 transition-transform duration-700 ease-out hidden md:block"
         style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px) rotate(3deg)` }}
@@ -82,10 +81,8 @@ export default function Login() {
         </div>
       </div>
 
-      {/* --- MAIN LOGIN CARD --- */}
       <div className="w-full max-w-[400px] z-10 px-4">
         
-        {/* Logo Area */}
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-2 text-blue-600">
             <Layout size={32} strokeWidth={2.5} />
@@ -105,7 +102,6 @@ export default function Login() {
           <div className="px-8 pb-8">
             <form onSubmit={handleSubmit} className="space-y-4">
               
-              {/* Email Input */}
               <div>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
@@ -123,7 +119,6 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Password Input */}
               <div>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
@@ -147,7 +142,6 @@ export default function Login() {
                 </div>
               )}
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -174,7 +168,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Footer/Legal */}
         <div className="mt-8 text-center space-y-2">
            <div className="flex justify-center gap-4 opacity-50">
              <div className="h-1 w-1 rounded-full bg-slate-400"></div>
@@ -182,7 +175,7 @@ export default function Login() {
              <div className="h-1 w-1 rounded-full bg-slate-400"></div>
            </div>
            <p className="text-xs text-slate-400">
-             &copy; 2025 Freello. Manage projects with joy.
+             &copy; 2025 Freello. Manage your projects the right way.
            </p>
         </div>
       </div>

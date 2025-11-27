@@ -7,20 +7,16 @@ export default function ProjectsPanel() {
   const { projects, openForm, openDetails } = useProjects();
 
   return (
-    // Theme: Dark Zinc (Charcoal) - Elegant dark background
     <div className="w-72 bg-zinc-800 border-r border-zinc-700/50 flex flex-col shadow-2xl z-30 h-full">
       
-      {/* Header & Action */}
       <div className="p-6 border-b border-zinc-700/50">
         <div className="flex items-center gap-3 mb-6">
-            {/* Icon: Subtle Teal Glow */}
             <div className="p-2 bg-teal-500/10 rounded-lg border border-teal-500/20">
                 <FolderKanban size={20} className="text-teal-400" />
             </div>
             <h2 className="text-lg font-bold tracking-wide text-zinc-100">Projects</h2>
         </div>
         
-        {/* New Project Button */}
         <button
           onClick={openForm}
           className="w-full bg-teal-500 hover:bg-teal-400 text-zinc-900 py-3 px-4 rounded-lg transition-all duration-200 font-bold shadow-lg shadow-teal-500/10 active:scale-[0.98] flex items-center justify-center gap-2 group"
@@ -30,7 +26,6 @@ export default function ProjectsPanel() {
         </button>
       </div>
 
-      {/* Projects List */}
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         <Droppable droppableId="sidebar">
           {(provided, snapshot) => (
@@ -52,7 +47,7 @@ export default function ProjectsPanel() {
                       ref={dragProvided.innerRef}
                       {...dragProvided.draggableProps}
                       {...dragProvided.dragHandleProps}
-                      // CRITICAL FIX: Pass the style directly. 
+                      // FIX: Pass the style directly. 
                       // Do NOT add manual rotation here, or it breaks the "snap back" animation.
                       style={dragProvided.draggableProps.style} 
                       className="outline-none"

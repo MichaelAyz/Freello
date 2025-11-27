@@ -38,13 +38,13 @@ export default function Signup() {
 
     try {
       const res = await signup({ name, email, password });  
-      console.log("✅ Signup successful:", res.data);
+      console.log(" Signup successful:", res.data);
       
       auth.login(res.data.user, res.data.token);
       navigate("/dashboard");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
-      console.error("❌ Signup error:", error.response?.data);
+      console.error(" Signup error:", error.response?.data);
       setError(error.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
@@ -69,7 +69,7 @@ export default function Signup() {
         </div>
       </div>
 
-      {/* Bottom Right Floating Task List */}
+
       <div 
         className="absolute bottom-[10%] right-[5%] lg:right-[15%] opacity-40 lg:opacity-100 transition-transform duration-700 ease-out hidden md:block"
         style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px) rotate(3deg)` }}
@@ -86,10 +86,9 @@ export default function Signup() {
         </div>
       </div>
 
-      {/* --- MAIN CARD --- */}
+ 
       <div className="w-full max-w-[400px] z-10 px-4">
-        
-        {/* Logo */}
+
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-2 text-blue-600">
             <Layout size={32} strokeWidth={2.5} />
@@ -107,7 +106,6 @@ export default function Signup() {
           <div className="px-8 pb-8">
             <form onSubmit={handleSubmit} className="space-y-4">
               
-              {/* Name */}
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
                   <User size={18} />
@@ -123,7 +121,6 @@ export default function Signup() {
                 />
               </div>
 
-              {/* Email */}
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
                   <Mail size={18} />
@@ -139,7 +136,6 @@ export default function Signup() {
                 />
               </div>
 
-              {/* Password */}
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
                   <Lock size={18} />
@@ -155,14 +151,12 @@ export default function Signup() {
                 />
               </div>
 
-              {/* Error Message */}
               {error && (
                 <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 text-xs font-medium animate-pulse">
                   {error}
                 </div>
               )}
 
-              {/* Submit Button (Used Teal to distinguish Signup) */}
               <button
                 type="submit"
                 disabled={loading}
@@ -188,7 +182,6 @@ export default function Signup() {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="mt-8 text-center space-y-2">
            <p className="text-xs text-slate-400">
              By signing up, you agree to Freello's Terms of Service.

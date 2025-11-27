@@ -12,7 +12,6 @@ export default function ProjectDetailsModal() {
   const [error, setError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // Load project into local form
   useEffect(() => {
     if (selectedProject) {
       setForm({ ...selectedProject });
@@ -27,7 +26,6 @@ export default function ProjectDetailsModal() {
   const handleSave = async () => {
     setError("");
 
-    // Validation
     if (!form.title?.trim()) {
       setError("Project title is required");
       return;
@@ -73,13 +71,10 @@ export default function ProjectDetailsModal() {
 
   return (
     <>
-      {/* Overlay */}
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-sm animate-fadeIn">
         
-        {/* Modal Card */}
         <div className="bg-[#F9F8F6] rounded-xl p-8 w-full max-w-lg shadow-2xl border border-white/50 max-h-[90vh] overflow-y-auto custom-scrollbar animate-fadeIn">
           
-          {/* Header */}
           <div className="flex justify-between items-center mb-6 border-b border-stone-200/60 pb-4">
             <div>
                <h3 className="text-xl font-bold text-slate-800">Project Details</h3>
@@ -94,17 +89,14 @@ export default function ProjectDetailsModal() {
             </button>
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded text-sm mb-6">
               {error}
             </div>
           )}
 
-          {/* Form Fields */}
           <div className="space-y-5">
             
-            {/* Title */}
             <div>
               <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
                 Project Title <span className="text-teal-500">*</span>
@@ -118,7 +110,6 @@ export default function ProjectDetailsModal() {
               />
             </div>
 
-            {/* Client Name */}
             <div>
               <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
                 Client Name <span className="text-teal-500">*</span>
@@ -133,7 +124,6 @@ export default function ProjectDetailsModal() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-               {/* Budget */}
                <div>
                  <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
                    Budget
@@ -150,7 +140,6 @@ export default function ProjectDetailsModal() {
                  </div>
                </div>
 
-               {/* Deadline */}
                <div>
                  <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
                    Deadline
@@ -165,7 +154,6 @@ export default function ProjectDetailsModal() {
                </div>
             </div>
 
-            {/* Notes */}
             <div>
               <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
                 Notes
@@ -180,7 +168,6 @@ export default function ProjectDetailsModal() {
             </div>
           </div>
 
-          {/* Actions Footer */}
           <div className="mt-8 pt-6 border-t border-stone-200/50 flex justify-between items-center">
             <button
               onClick={() => setShowDeleteConfirm(true)}
@@ -219,7 +206,6 @@ export default function ProjectDetailsModal() {
         </div>
       </div>
 
-      {/* Delete Confirmation Dialog */}
       {showDeleteConfirm && (
         <ConfirmDialog
           title="Delete Project"

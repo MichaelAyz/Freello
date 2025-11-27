@@ -30,7 +30,6 @@ export default function Board() {
 
             {provided.placeholder}
 
-            {/* Empty State */}
             {boardProjects.length === 0 && (
               <div className="flex-1 flex flex-col items-center justify-center h-[70vh] min-w-[300px] animate-fadeIn opacity-60">
                 <div className="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mb-6 border border-zinc-700 shadow-xl ring-4 ring-zinc-800">
@@ -38,7 +37,7 @@ export default function Board() {
                 </div>
                 <h3 className="text-xl font-bold text-zinc-300 mb-2">Your Board is Empty</h3>
                 <p className="text-zinc-500 text-sm max-w-xs text-center">
-                  Drag a project card from the sidebar on the left to start visualizing your workflow.
+                  Drag a project card from the sidebar to start working.
                 </p>
               </div>
             )}

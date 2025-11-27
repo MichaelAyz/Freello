@@ -11,8 +11,6 @@ interface ColumnProps {
   index: number;
 }
 
-// CALM COLOR PALETTE (Matches Warm Light Theme)
-// Assigns specific styles based on the column index
 const getColumnColors = (index: number) => {
   const colors = [
     { border: "border-t-teal-400", shadow: "shadow-teal-500/10", dot: "bg-teal-400" },
@@ -39,7 +37,6 @@ const Column: React.FC<ColumnProps> = ({ project, index }) => {
     openDetails 
   } = useProjects();
 
-  // Calculate theme based on index
   const theme = getColumnColors(index);
 
   const handleDeleteClick = () => {
@@ -67,7 +64,6 @@ const Column: React.FC<ColumnProps> = ({ project, index }) => {
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            // Styling: Warm background, dynamic top border, soft shadows
             className={`
               w-64 shrink-0 flex flex-col rounded-xl transition-all duration-200
               bg-[#F9F8F6] border border-stone-200/80
@@ -82,7 +78,6 @@ const Column: React.FC<ColumnProps> = ({ project, index }) => {
               maxHeight: 'calc(100vh - 140px)'
             }}
           >
-            {/* Header Component (Receives the matching color dot) */}
             <ColumnHeader
               project={project}
               menuOpen={menuOpen}
@@ -94,7 +89,7 @@ const Column: React.FC<ColumnProps> = ({ project, index }) => {
               colorDot={theme.dot} 
             />
 
-            {/* Body (Tasks) Component */}
+
             <ColumnBody
               project={project}
               onAddTask={addTask}
@@ -106,7 +101,6 @@ const Column: React.FC<ColumnProps> = ({ project, index }) => {
         )}
       </Draggable>
 
-      {/* Delete Confirmation Dialog */}
       {showDeleteConfirm && (
         <ConfirmDialog
           title="Delete Project"

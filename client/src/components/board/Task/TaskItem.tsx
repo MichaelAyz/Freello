@@ -18,20 +18,17 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(task.text);
   
-  // OPTIMISTIC STATE: Local state handles the visual "check" immediately
   const [isChecked, setIsChecked] = useState(task.done);
 
-  // Sync local state if the prop changes from the server/parent
   useEffect(() => {
     setIsChecked(task.done);
   }, [task.done]);
 
   const handleToggle = () => {
-    // 1. Update UI immediately (Optimistic)
     const newState = !isChecked;
     setIsChecked(newState);
     
-    // 2. Trigger actual API call
+    // 2. Trigger API call
     onToggle(task._id!);
   };
 
@@ -51,7 +48,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
       }
     `}>
       
-      {/* Custom Checkbox Area */}
       <div 
         className="mt-0.5 shrink-0 cursor-pointer"
         onClick={(e) => {
@@ -70,7 +66,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 min-w-0 pt-0.5">
         {editing ? (
           <input
@@ -99,7 +94,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
         )}
       </div>
 
-      {/* Delete Action (Visible on Hover) */}
       <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 gap-1">
          <button
             onClick={(e) => {

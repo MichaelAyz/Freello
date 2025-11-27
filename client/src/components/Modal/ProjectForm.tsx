@@ -19,7 +19,6 @@ export default function ProjectForm() {
     e.preventDefault();
     setError("");
 
-    // Validation
     if (!title.trim()) {
       setError("Project title is required");
       return;
@@ -41,7 +40,6 @@ export default function ProjectForm() {
         status: "Inquiry", 
       });
 
-      // Reset form
       setTitle("");
       setClientName("");
       setBudget("");
@@ -56,12 +54,9 @@ export default function ProjectForm() {
   };
 
   return (
-    // Overlay: Modern, blurred backdrop
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-sm animate-fadeIn">
-      {/* Modal Container: Warm Light Theme */}
       <div className="bg-[#F9F8F6] rounded-xl p-8 w-full max-w-md shadow-2xl border border-white/50 animate-fadeIn">
         
-        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h3 className="text-xl font-bold text-slate-800">Create New Project</h3>
@@ -77,16 +72,13 @@ export default function ProjectForm() {
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Error Message */}
           {error && (
             <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded text-sm mb-4">
               {error}
             </div>
           )}
 
-          {/* Title */}
           <div>
             <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
               Project Title <span className="text-teal-500">*</span>
@@ -102,7 +94,6 @@ export default function ProjectForm() {
             />
           </div>
 
-          {/* Client Name */}
           <div>
             <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
               Client Name <span className="text-teal-500">*</span>
@@ -119,7 +110,6 @@ export default function ProjectForm() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            {/* Budget */}
             <div>
               <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
                 Budget
@@ -137,7 +127,6 @@ export default function ProjectForm() {
               </div>
             </div>
 
-            {/* Deadline */}
             <div>
               <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
                 Deadline
@@ -152,7 +141,6 @@ export default function ProjectForm() {
             </div>
           </div>
 
-          {/* Notes */}
           <div>
             <label className="block text-xs font-bold text-stone-500 uppercase tracking-wide mb-1.5">
               Notes
@@ -167,7 +155,6 @@ export default function ProjectForm() {
             />
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-4 border-t border-stone-200/50 mt-2">
             <button
               type="button"
