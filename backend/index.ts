@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
@@ -30,6 +30,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check endpoint (for Docker healthcheck)
+app.get("/health", (req: Request, res: Response) => {
+  const healthStatus = {
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
+  };
+  res.status(200).json(healthStatus);
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 
@@ -40,9 +51,10 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log(" MongoDB connected"))
   .catch(err => console.error(" MongoDB connection failed:", err));
 
-app.get("/", (req, res) => res.send("Server is running..."));
+app.get("/", (req: Request, res: Response) => res.send("Server is running..."));
 
 app.listen(PORT, () => {
   console.log(` Server running on port ${PORT}`);
   console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(` Allowed origins: ${allowedOrigins.join(', ')}`);
 });
