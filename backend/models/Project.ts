@@ -25,7 +25,7 @@ const TaskSchema = new Schema<ITask>({
 
 const ProjectSchema = new Schema<IProject>(
   {
-    userId: { type: String, required: true },
+    userId: { type: String, required: true, index: true },
     title: { type: String, required: true },
     clientName: { type: String, required: true },
     budget: { type: Number, required: true },
