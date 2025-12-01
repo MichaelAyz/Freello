@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  DOCKER_USERNAME: michaelayz
+  DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 jobs:
