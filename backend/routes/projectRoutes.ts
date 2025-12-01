@@ -21,10 +21,10 @@ router.post("/", verifyToken, async (req: Request, res: Response) => {
       status,
     });
     await project.save();
-    res.status(201).json(project);
+    return res.status(201).json(project);
   } catch (error) {
     console.error("Create project error:", error);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 

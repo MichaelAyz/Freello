@@ -7,12 +7,12 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
 
 const setTokenCookie = (res: Response, token: string) => {
+  const isProduction = process.env.NODE_ENV === "production";
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 24 * 60 * 60 * 1000, 
-    domain: undefined,
   });
 
 };
