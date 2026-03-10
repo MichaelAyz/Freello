@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/$/, ''),
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -42,13 +42,13 @@ export const updateProject = (id: string, data: any) => api.put(`/projects/${id}
 export const deleteProject = (id: string) => api.delete(`/projects/${id}`);
 
 // Task APIs
-export const addTask = (projectId: string, text: string) => 
+export const addTask = (projectId: string, text: string) =>
   api.post(`/projects/${projectId}/tasks`, { text });
 
-export const updateTask = (projectId: string, taskId: string, updates: { done?: boolean; text?: string }) => 
+export const updateTask = (projectId: string, taskId: string, updates: { done?: boolean; text?: string }) =>
   api.patch(`/projects/${projectId}/tasks/${taskId}`, updates);
 
-export const deleteTask = (projectId: string, taskId: string) => 
+export const deleteTask = (projectId: string, taskId: string) =>
   api.delete(`/projects/${projectId}/tasks/${taskId}`);
 
 // Auth APIs
